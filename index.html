@@ -1,40 +1,51 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Форма реєстрації</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="login-container">
-    <h2>Форма реєстрації</h2>
-    <form id="registerForm">
-      <div class="form-group">
-        <label for="fname">Ім’я:</label>
-        <input type="text" id="fname" name="fname" required>
+  <div class="container card">
+    <h1>Форма реєстрації</h1>
+
+    <form id="registerForm" class="form">
+      <label for="fname">Ім’я:</label>
+      <input id="fname" name="fname" type="text" placeholder="Olena" required />
+
+      <label for="email">Електронна пошта:</label>
+      <input id="email" name="email" type="email" placeholder="@gmail.com" required />
+
+      <label for="password">Пароль:</label>
+      <div class="password-row">
+        <input id="password" name="password" type="password" placeholder="••••••••" required />
+        <button id="togglePassword" type="button" class="icon-btn" aria-label="Показати пароль">👁</button>
       </div>
 
-      <div class="form-group">
-        <label for="lname">Прізвище:</label>
-        <input type="text" id="lname" name="lname" required>
-      </div>
-
-      <div class="form-group">
-        <label for="email">Електронна пошта:</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-
-      <div class="form-group password-wrapper">
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required minlength="6">
-        <span class="toggle-password" id="togglePassword">👁</span>
-      </div>
-
-      <button type="submit">Зареєструватися</button>
+      <button type="submit" class="submit-btn">Зареєструватися</button>
     </form>
-    <p id="message"></p>
+
+    <div id="message" class="message" aria-live="polite"></div>
   </div>
 
+  <dialog id="successModal" class="modal">
+    <form method="dialog" class="modal-card">
+      <header class="modal-header">
+        <strong>Success</strong>
+        <button value="close" aria-label="Закрити" class="close-x">✕</button>
+      </header>
+      <div class="modal-body">
+        <p>Registration successful!</p>
+        <div id="nameOutput" class="name-output"></div>
+      </div>
+      <footer class="modal-footer">
+        <button value="close" class="close-btn">CLOSE</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script src="library.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

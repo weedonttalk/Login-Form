@@ -1,63 +1,63 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("registerForm");
-  const message = document.getElementById("message");
-  const passwordField = document.getElementById("password");
-  const togglePassword = document.getElementById("togglePassword");
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('registerForm');
+  const fnameEl = document.getElementById('fname');
+  const emailEl = document.getElementById('email');
+  const passwordEl = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
+  const message = document.getElementById('message');
+  const modal = document.getElementById('successModal');
+  const nameOutput = document.getElementById('nameOutput');
 
-  // 👁 Показати/сховати пароль
-  togglePassword.addEventListener("click", () => {
-    if (passwordField.type === "password") {
-      passwordField.type = "text";
-      togglePassword.textContent = "🙈";
-    } else {
-      passwordField.type = "password";
-      togglePassword.textContent = "👁";
-    }
+  togglePassword.addEventListener('click', () => {
+    const show = passwordEl.type === 'password';
+    passwordEl.type = show ? 'text' : 'password';
+    togglePassword.textContent = show ? '🙈' : '👁';
   });
 
-  // Відправка форми на сервер
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    message.textContent = '';
 
-    const data = {
-      fname: document.getElementById("fname").value.trim(),
-      lname: document.getElementById("lname").value.trim(),
-      email: document.getElementById("email").value.trim(),
-      password: passwordField.value.trim()
-    };
+    const fname = fnameEl.value.trim();
+    const email = emailEl.value.trim();
+    const password = passwordEl.value.trim();
 
-    if (!data.fname || !data.lname || !data.email || !data.password) {
-      message.style.color = "red";
-      message.textContent = "Будь ласка, заповніть усі поля!";
+    if(!fname || !email || !password){
+      message.style.color = 'red';
+      message.textContent = 'Будь ласка, заповніть усі поля!';
+      return;
+    }
+    if(password.length < 6){
+      message.style.color = 'red';
+      message.textContent = 'Пароль має містити мінімум 6 символів!';
       return;
     }
 
-    if (data.password.length < 6) {
-      message.style.color = "red";
-      message.textContent = "Пароль має містити мінімум 6 символів!";
-      return;
-    }
-
-    try {
-      const response = await fetch("/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+    try{
+      const res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ fname, email, password })
       });
-
-      const result = await response.json();
-      if (result.success) {
-        message.style.color = "green";
-        message.textContent = `Користувач ${data.fname} ${data.lname} зареєстрований!`;
+      const data = await res.json();
+      if(data.success){
+        message.style.color = 'green';
+        message.textContent = 'Реєстрація успішна!';
+        nameOutput.innerHTML = '';
+        if(window.WriteName){ window.WriteName(fname, nameOutput, {delayMs:180}); }
+        else { nameOutput.textContent = fname; }
+        if(typeof modal.showModal === 'function'){ modal.showModal(); } else { modal.setAttribute('open',''); }
         form.reset();
+        togglePassword.textContent = '👁';
+        passwordEl.type = 'password';
       } else {
-        message.style.color = "red";
-        message.textContent = result.error;
+        message.style.color = 'red';
+        message.textContent = data.error || 'Невірні дані!';
       }
-    } catch (err) {
-      message.style.color = "red";
-      message.textContent = "Помилка серверу!";
+    }catch(err){
       console.error(err);
+      message.style.color = 'red';
+      message.textContent = 'Помилка серверу!';
     }
   });
 });
